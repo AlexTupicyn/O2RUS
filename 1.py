@@ -1,10 +1,12 @@
 file_path = 'text.txt'
 
+
 razdel53 = []
-data = []
-id = []
+
+ID_list = []
+Length_Name = []
 pgn = []
-Length = []
+
 Name_paragraph = []
 poisk = dict()
 n = 0
@@ -32,21 +34,27 @@ with open(file_path, 'r', encoding='utf-8') as file:
                     dl = 0
             if dl > 0:
                 if "DataLength:" in (''.join(map(str, w)).lstrip()):
-                    # print("Data", w[4])
-                    data.append(w[4])
+                    #print("Data", w[4])
+                    DataLength = (w[4])
+
                     sum += 1
                 if w[1] == "Parameter" and w[2] == "Group":
                     if w[7] == ')':
                         # print("PGN ", w[4], " ID ", w[6])
                         pgn.append(w[4])
-                        id.append(w[6])
+                        ID = (w[6])
+                        ID_list.append(ID)
+                        ID_list.append(DataLength)
                         pg += 1
 
                     else:
                         # print("PGN ", w[4], " ID ", w[7])
                         pgn.append(w[4])
-                        id.append(w[7])
+                        ID = (w[7])
+                        ID_list.append(ID)
+                        ID_list.append(DataLength)
                         pg += 1
+
 
                 if "LengthParameterNameSPN" in (''.join(map(str, w)).lstrip()) and n > 0:
                     podschet_strok = 1
@@ -54,55 +62,84 @@ with open(file_path, 'r', encoding='utf-8') as file:
 
                 if podschet_strok == 1:
                     ggg += 1
-                    # if "444)" in w: print(w)
 
                     if w[1] == "-71":
                         podschet_strok = 0
-                        #                   print(pgn[pg-1], " - ", pg)
                         poisk[pgn[pg - 1]] = []
-                        #                   print(poisk)
                         poisk[str(pgn[pg - 1])].append(Name_paragraph)
                         Name_paragraph = []
 
+                        # data.append(ID)
+                        # data.append(DataLength)
+                        # data.append(Length)
+                        # data.append(Name)
+                        # print("000", Name, "000")
+                        ID_list.append(Length_Name)
+                        Length_Name = []
+
                     if "444)" in w[1]:
+
                         Name_paragraph[0] = Name_paragraph[0] + " 444)"
-                        # print(Name_paragraph)
+                        print(Length_Name.index(Name))
+                        Name2 = Name + " 444)"
+                        Length_Name[Length_Name.index(Name)] = Name2
+
                     if "-71" in w[2:]:
 
                         if w[-5] == "-71":
-                            # print(w[2], w[3], " ", w[-4])
-                            Length.append(w[2] + " " + w[3])
+                            #print(w[2], w[3], " ", w[-4])
+                            Length = (w[2] + " " + w[3])
+                            Length_Name.append(Length)
                             war = str(w[-4]) + "  " + (' '.join(map(str, w[4:-7])).lstrip())
                             # print("000",war)
+                            Name = (' '.join(map(str, w[4:-7])).lstrip())
+
+                            Length_Name.append(Name)
                             Name_paragraph.append(war)
+                            #print("111", Name, "111")
                             ttt += 1
 
                         elif len(w) > 5 and w[-4] == "-71":
-                            # print(w[2], w[3], " ", w[-5])
-                            Length.append(w[2] + " " + w[3])
+                            #print(w[2], w[3], " ", w[-3], w)
+                            Length = (w[2] + " " + w[3])
+                            Length_Name.append(Length)
                             war = str(w[-3]) + "  " + (' '.join(map(str, w[4:-5])).lstrip())
-                            # print(war,w, line_number)
+                            #print(war)
+                            Name = (' '.join(map(str, w[4:-5])).lstrip())
+
+                            Length_Name.append(Name)
                             Name_paragraph.append(war)
-                            # print(Length)
+                            #print("222", Name, "222")
                             ttt += 1
 
                         else:
-                            Length.append(w[2] + " " + w[3])
+                            #print(w[2], w[3], " ", w[-5])
+                            Length = (w[2] + " " + w[3])
+                            Length_Name.append(Length)
                             war = str(w[-5]) + "  " + (' '.join(map(str, w[4:-7])).lstrip())
+                            Name = (' '.join(map(str, w[4:-7])).lstrip())
+
+                            Length_Name.append(Name)
                             Name_paragraph.append(war)
-                            # print(war)
+                            #print("333", Name, "333")
                             ttt += 1
 
-# print(n, razdel53)
 
-print(n, sum, pg, ggg, k, ttt)
-param_5_2 = []
+print(ttt, ggg, pg, sum, n)
+print(ID_list)
+
+
+
+
+print(poisk)
+param_5_2 = {}
+name = []
 nashli = 0
 for key, volue in poisk.items():
-    print(key)
+    #print(key)
 
     for index in range(len(volue[0])):
-        print(volue[0][index], end="\n")
+        name =[]
         line = ''
         with open("text.txt", "r", encoding="utf-8") as file:
             for line in file:
@@ -124,10 +161,19 @@ for key, volue in poisk.items():
                 if (nashli == 1) and ("SPN:" in line):
                     SPN = (''.join(map(str, line.split()[1])).lstrip())
 
-                    param_5_2.append(Slot_Scaling)
-                    param_5_2.append(Slot_Range)
-                    param_5_2.append(SPN)
-                    poisk[key][volue[0][index]].append(param_5_2)
+                    sss = str(volue[0][index])
+                    name.append(' '.join(map(str, sss.split()[1:])).lstrip())
+
+                    param_5_2 = {"ID": key,
+                                 "Name": name,
+                                 "Slot_Scaling": Slot_Scaling,
+                                 "Slot_Range": Slot_Range,
+                                 "SPN": SPN
+                                 } #дописать
+                    #poisk[str(key)][volue[0][index]].append(param_5_2)
 
                     nashli = 0
-print(poisk)
+sss=str(volue[0][1])
+print(' '.join(map(str, sss.split()[1:])).lstrip())
+
+print(param_5_2)
