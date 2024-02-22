@@ -113,11 +113,14 @@ for key, volue in poisk.items():
                     sss = str(volue[0][index])
                     name.append(' '.join(map(str, sss.split()[1:])).lstrip())
                     param_5_2 = {"ID": key,
+                                 "Data_length": [],
+                                 "Length":[],
                                  "Name": name,
-                                 "Slot_Scaling": Slot_Scaling,
-                                 "Slot_Range": Slot_Range,
+                                 "RusName":[],
+                                 "Scaling": Slot_Scaling,
+                                 "Range": Slot_Range,
                                  "SPN": SPN
-                                 } #дописать
+                                 } #дописать из ID_list
 
                     nashli = 0
 print(param_5_2)
